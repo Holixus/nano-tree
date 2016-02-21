@@ -28,8 +28,14 @@ function complete(to, from) {
 			to[id] = from[id];
 }
 
-NanoNode.hiers = [ NanoNode ];
 NanoNode.ancestor = undefined;
+NanoNode.hiers = [ NanoNode ];
+NanoNode.register = function (types, constr) {
+	throw Error('There is not constructors in Node class available');
+};/*
+NanoNode.unregister = function (types, constr) {
+	throw Error('There is not constructors in Node class available');
+};*/
 
 NanoNode.expand = function (constr, cutoff) {
 	if (!cutoff) {
@@ -39,15 +45,12 @@ NanoNode.expand = function (constr, cutoff) {
 		} while ((an = an.ancestor));
 	}
 	complete(constr.prototype, this.prototype);
-	constr.expand = this.expand;
+	constr.ancestor = !cutoff ? this : undefined;
 	constr.hiers = [ constr ];
 	constr.uid = this.uid;
+	constr.expand = this.expand;
 	constr.register = this.register;
-	constr.ancestor = !cutoff ? this : undefined;
-};
-
-NanoNode.register = function (types, constr) {
-	throw Error('There is not constructors in Node class available');
+	//constr.unregister = this.unregister;
 };
 
 var NanoGroup = function _NanoGroup(type, id) {
@@ -76,27 +79,26 @@ NanoGroup.prototype = {
 		return ret;
 	},
 	remove: function (node) {
-		if (node.up === this) {
-			node.predrop();
-			delete this.children[node.id];
-			--this.length;
-			if (!this.length)
-				this.first = this.last = undefined;
-			else {
-				if (this.first === node) {
-					for (var n in this.children) {
-						this.first = this.children[n];
-						break;
-					}
+		if (node.up !== this)
+			return;
+		node.predrop();
+		delete this.children[node.id];
+		--this.length;
+		if (!this.length)
+			this.first = this.last = undefined;
+		else {
+			if (this.first === node)
+				for (var n in this.children) {
+					this.first = this.children[n];
+					break;
 				}
-				if (this.last === node)
-					for (var n in this.children)
-						this.last = this.children[n];
-			}
-			node.up = undefined;
-			this.regroup();
-			node.postdrop();
+			if (this.last === node)
+				for (var n in this.children)
+					this.last = this.children[n];
 		}
+		node.up = undefined;
+		this.regroup();
+		node.postdrop();
 	},
 	empty: function () {
 		var s = this.children;
@@ -131,6 +133,15 @@ NanoGroup.register = function (types, constr) {
 			hs[i].prototype[type] = create;
 	});
 };
+
+/*
+NanoGroup.unregister = function (types) {
+	var hs = this.hiers;
+	types.split(/\s*,\s{0,}/).forEach(function (type) {
+		for (var i = 0, n = hs.length; i < n; ++i)
+			delete hs[i].prototype[type];
+	});
+};*/
 
 module.exports = {
 	Node: NanoNode,
