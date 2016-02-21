@@ -359,6 +359,33 @@ suite('API', function () {
 		done()
 	});
 
+	test('Group.register() for two same constructors', function (done) {
+		function defnode(name, ancestor, cutoff) {
+			var c = new Function (name, 'type,id', 'nano.Node.call(this, type, id);');
+			c.prototype = {};
+			ancestor.expand(c, cutoff);
+			return c;
+		}
+		function defgroup(name, ancestor, cutoff) {
+			var c = new Function (name, 'type,id', 'nano.Group.call(this, type, id);');
+			c.prototype = {};
+			ancestor.expand(c, cutoff);
+			return c;
+		}
+
+		var Bow = defgroup('Bow', nano.Group);
+		var Arrow = defnode('Arrow', nano.Node);
+
+		Bow.register('arrow', Arrow);
+
+		try {
+			Bow.register('arrow', nano.Node);
+		} catch (e) {
+			return done();
+		}
+		done(Error('error not thrown'))
+	});
+
 });
 
 suite('creating', function () {

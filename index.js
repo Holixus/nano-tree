@@ -129,8 +129,13 @@ NanoGroup.register = function (types, constr) {
 		var create = function createNanoNode(id, a, b, c) {
 			return this.add(new constr(type, cls.uid(id), a, b, c));
 		};
-		for (var i = 0, n = hs.length; i < n; ++i)
-			hs[i].prototype[type] = create;
+		for (var i = 0, n = hs.length; i < n; ++i) {
+			var c = hs[i],
+			    p = c.prototype;
+			if (type in p)
+				throw Error(c.type+'.'+type+'() method conflicts with registering constructor');
+			p[type] = create;
+		}
 	});
 };
 
