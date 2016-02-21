@@ -1,21 +1,4 @@
-var assert = require('core-assert'),
-    json = require('nano-json'),
-    timer = require('nano-timer');
-
-
-function uni_test(fn, sradix, dradix, args, ret) {
-	test(fn.name+'('+json.js2str(args, sradix)+') -> '+json.js2str(ret, dradix)+'', function (done) {
-		assert.deepStrictEqual(args instanceof Array ? fn.apply(null, args) : fn.call(null, args), ret);
-		done();
-	});
-}
-
-function massive(name, fn, pairs, sradix, dradix) {
-	suite(name, function () {
-		for (var i = 0, n = pairs.length; i < n; i += 2)
-			uni_test(fn, sradix, dradix, pairs[i], pairs[i+1]);
-	});
-}
+var assert = require('core-assert');
 
 var nano = require('../index.js');
 
@@ -373,10 +356,6 @@ suite('API', function () {
 		assert.strictEqual('function', typeof LongBow.prototype.arrow);
 		assert.strictEqual('function', typeof ShortBow.prototype.arrow);
 		assert.strictEqual('undefined', typeof NotBow.prototype.arrow);
-		done()
-	});
-
-	test('Group.register() for two levels with cutted off last', function (done) {
 		done()
 	});
 
