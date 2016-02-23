@@ -30,10 +30,10 @@ function complete(to, from) {
 
 NanoNode.ancestor = undefined;
 NanoNode.hiers = [ NanoNode ];
-NanoNode.register = function (types, constr) {
+NanoNode.install = function (types, constr) {
 	throw Error('There is not constructors in Node class available');
 };/*
-NanoNode.unregister = function (types, constr) {
+NanoNode.uninstall = function (types, constr) {
 	throw Error('There is not constructors in Node class available');
 };*/
 
@@ -49,8 +49,8 @@ NanoNode.expand = function (constr, cutoff) {
 	constr.hiers = [ constr ];
 	constr.uid = this.uid;
 	constr.expand = this.expand;
-	constr.register = this.register;
-	//constr.unregister = this.unregister;
+	constr.install = this.install;
+	//constr.uninstall = this.uninstall;
 };
 
 var NanoGroup = function _NanoGroup(type, id) {
@@ -83,8 +83,7 @@ NanoGroup.prototype = {
 			return;
 		node.predrop();
 		delete this.children[node.id];
-		--this.length;
-		if (!this.length)
+		if (!--this.length)
 			this.first = this.last = undefined;
 		else {
 			if (this.first === node)
@@ -122,7 +121,7 @@ NanoGroup.uid = (function () {
 	return function (id) { return id === undefined ? '$'+(sid++).toString(36) : id; };
 })();
 
-NanoGroup.register = function (types, constr) {
+NanoGroup.install = function (types, constr) {
 	var hs = this.hiers,
 	    cls = this;
 	types.split(/\s*,\s*/).forEach(function (type) {
@@ -133,14 +132,14 @@ NanoGroup.register = function (types, constr) {
 			var c = hs[i],
 			    p = c.prototype;
 			if (type in p)
-				throw Error(c.type+'.'+type+'() method conflicts with registering constructor');
+				throw Error(c.type+'.'+type+'() method conflicts with the constructor');
 			p[type] = create;
 		}
 	});
 };
 
 /*
-NanoGroup.unregister = function (types) {
+NanoGroup.uninstall = function (types) {
 	var hs = this.hiers;
 	types.split(/\s*,\s{0,}/).forEach(function (type) {
 		for (var i = 0, n = hs.length; i < n; ++i)

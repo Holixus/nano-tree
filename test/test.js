@@ -232,7 +232,7 @@ suite('API', function () {
 		assert.deepStrictEqual([MenuPage], MenuPage.hiers);
 		assert.strictEqual(nano.Node.expand, MenuPage.expand);
 		assert.strictEqual(nano.Node.uid, MenuPage.uid);
-		assert.strictEqual(nano.Node.register, MenuPage.register);
+		assert.strictEqual(nano.Node.install, MenuPage.install);
 		assert.strictEqual(nano.Node, MenuPage.ancestor);
 		done();
 	});
@@ -251,7 +251,7 @@ suite('API', function () {
 		assert.deepStrictEqual([MenuPage], MenuPage.hiers);
 		assert.strictEqual(nano.Node.expand, MenuPage.expand);
 		assert.strictEqual(nano.Node.uid, MenuPage.uid);
-		assert.strictEqual(nano.Node.register, MenuPage.register);
+		assert.strictEqual(nano.Node.install, MenuPage.install);
 		assert.strictEqual(nano.Node, MenuPage.ancestor);
 
 		function MenuSubPage(type, id) {
@@ -267,7 +267,7 @@ suite('API', function () {
 		assert.deepStrictEqual([MenuSubPage], MenuSubPage.hiers);
 		assert.strictEqual(MenuPage.expand, MenuSubPage.expand);
 		assert.strictEqual(MenuPage.uid, MenuSubPage.uid);
-		assert.strictEqual(MenuPage.register, MenuSubPage.register);
+		assert.strictEqual(MenuPage.install, MenuSubPage.install);
 		assert.strictEqual(MenuPage, MenuSubPage.ancestor);
 
 		assert.deepStrictEqual([MenuPage, MenuSubPage], MenuPage.hiers);
@@ -289,7 +289,7 @@ suite('API', function () {
 		assert.deepStrictEqual([MenuPage], MenuPage.hiers);
 		assert.strictEqual(nano.Node.expand, MenuPage.expand);
 		assert.strictEqual(nano.Node.uid, MenuPage.uid);
-		assert.strictEqual(nano.Node.register, MenuPage.register);
+		assert.strictEqual(nano.Node.install, MenuPage.install);
 		assert.strictEqual(nano.Node, MenuPage.ancestor);
 
 		function MenuSubPage(type, id) {
@@ -305,7 +305,7 @@ suite('API', function () {
 		assert.deepStrictEqual([MenuSubPage], MenuSubPage.hiers);
 		assert.strictEqual(MenuPage.expand, MenuSubPage.expand);
 		assert.strictEqual(MenuPage.uid, MenuSubPage.uid);
-		assert.strictEqual(MenuPage.register, MenuSubPage.register);
+		assert.strictEqual(MenuPage.install, MenuSubPage.install);
 		assert.strictEqual(undefined, MenuSubPage.ancestor);
 
 		assert.deepStrictEqual([MenuPage], MenuPage.hiers);
@@ -314,7 +314,7 @@ suite('API', function () {
 	});
 
 
-	test('Node.register()', function (done) {
+	test('Node.install()', function (done) {
 		function MenuPage(type, id) {
 			nano.Node.call(this, type, id);
 		}
@@ -324,13 +324,13 @@ suite('API', function () {
 		};
 
 		try {
-			nano.Node.register('page', MenuPage);
+			nano.Node.install('page', MenuPage);
 		} catch (e) {
 			done();
 		}
 	});
 
-	test('Group.register() for two levels', function (done) {
+	test('Group.install() for two levels', function (done) {
 		function defnode(name, ancestor, cutoff) {
 			var c = new Function (name, 'type,id', 'nano.Node.call(this, type, id);');
 			c.prototype = {};
@@ -351,7 +351,7 @@ suite('API', function () {
 
 		var Arrow = defnode('Arrow', nano.Node);
 
-		Bow.register('arrow', Arrow);
+		Bow.install('arrow', Arrow);
 
 		assert.strictEqual('function', typeof LongBow.prototype.arrow);
 		assert.strictEqual('function', typeof ShortBow.prototype.arrow);
@@ -359,7 +359,7 @@ suite('API', function () {
 		done()
 	});
 
-	test('Group.register() for two same constructors', function (done) {
+	test('Group.install() for two same constructors', function (done) {
 		function defnode(name, ancestor, cutoff) {
 			var c = new Function (name, 'type,id', 'nano.Node.call(this, type, id);');
 			c.prototype = {};
@@ -376,10 +376,10 @@ suite('API', function () {
 		var Bow = defgroup('Bow', nano.Group);
 		var Arrow = defnode('Arrow', nano.Node);
 
-		Bow.register('arrow', Arrow);
+		Bow.install('arrow', Arrow);
 
 		try {
-			Bow.register('arrow', nano.Node);
+			Bow.install('arrow', nano.Node);
 		} catch (e) {
 			return done();
 		}
@@ -415,8 +415,8 @@ suite('creating', function () {
 		nano.Node.expand(MenuPage);
 		nano.Group.expand(MenuGroup);
 
-		MenuGroup.register('page', MenuPage);
-		MenuGroup.register('group', MenuGroup);
+		MenuGroup.install('page', MenuPage);
+		MenuGroup.install('group', MenuGroup);
 
 		var menu = 
 		(new MenuGroup('menu', 'root'))

@@ -39,8 +39,8 @@ MenuGroup.prototype = {
 nano.Node.expand(MenuPage);
 nano.Group.expand(MenuGroup);
 
-MenuGroup.register('page', MenuPage);
-MenuGroup.register('group', MenuGroup);
+MenuGroup.install('page', MenuPage);
+MenuGroup.install('group', MenuGroup);
 
 var menu = 
 (new MenuGroup('menu', 'root'))
