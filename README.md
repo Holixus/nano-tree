@@ -7,7 +7,7 @@
 [![Downloads][downloads-image]][downloads-url]
 
 # nano-tree
-Very convenient objects hierarhies creation library.
+Very convenient objects hierarchies creation library.
 
 
 ## Example
